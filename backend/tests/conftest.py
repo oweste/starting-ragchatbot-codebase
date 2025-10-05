@@ -1,14 +1,14 @@
 """Pytest configuration and shared fixtures for RAG system tests"""
 
-import pytest
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 from typing import List
 
-from models import Course, Lesson, CourseChunk
-from vector_store import VectorStore
+import pytest
 from config import Config
+from models import Course, CourseChunk, Lesson
+from vector_store import VectorStore
 
 
 @pytest.fixture
@@ -40,19 +40,19 @@ def sample_course() -> Course:
             Lesson(
                 lesson_number=0,
                 title="Introduction to AI",
-                lesson_link="https://example.com/test-course/lesson-0"
+                lesson_link="https://example.com/test-course/lesson-0",
             ),
             Lesson(
                 lesson_number=1,
                 title="Machine Learning Basics",
-                lesson_link="https://example.com/test-course/lesson-1"
+                lesson_link="https://example.com/test-course/lesson-1",
             ),
             Lesson(
                 lesson_number=2,
                 title="Neural Networks",
-                lesson_link="https://example.com/test-course/lesson-2"
-            )
-        ]
+                lesson_link="https://example.com/test-course/lesson-2",
+            ),
+        ],
     )
 
 
@@ -64,38 +64,38 @@ def sample_course_chunks(sample_course) -> List[CourseChunk]:
             content="Course Test Course on AI Lesson 0 content: Artificial Intelligence is the simulation of human intelligence by machines. It includes learning, reasoning, and self-correction.",
             course_title=sample_course.title,
             lesson_number=0,
-            chunk_index=0
+            chunk_index=0,
         ),
         CourseChunk(
             content="AI systems can perform tasks that typically require human intelligence such as visual perception, speech recognition, and decision-making.",
             course_title=sample_course.title,
             lesson_number=0,
-            chunk_index=1
+            chunk_index=1,
         ),
         CourseChunk(
             content="Course Test Course on AI Lesson 1 content: Machine learning is a subset of AI that enables systems to learn from data without explicit programming. Supervised learning uses labeled data.",
             course_title=sample_course.title,
             lesson_number=1,
-            chunk_index=2
+            chunk_index=2,
         ),
         CourseChunk(
             content="Unsupervised learning finds patterns in unlabeled data. Reinforcement learning learns through trial and error using rewards.",
             course_title=sample_course.title,
             lesson_number=1,
-            chunk_index=3
+            chunk_index=3,
         ),
         CourseChunk(
             content="Course Test Course on AI Lesson 2 content: Neural networks are computing systems inspired by biological neural networks. They consist of interconnected nodes called neurons.",
             course_title=sample_course.title,
             lesson_number=2,
-            chunk_index=4
+            chunk_index=4,
         ),
         CourseChunk(
             content="Deep learning uses neural networks with multiple layers to learn hierarchical representations of data. Backpropagation is used to train these networks.",
             course_title=sample_course.title,
             lesson_number=2,
-            chunk_index=5
-        )
+            chunk_index=5,
+        ),
     ]
 
 
@@ -105,7 +105,7 @@ def populated_vector_store(test_config, sample_course, sample_course_chunks):
     vector_store = VectorStore(
         chroma_path=test_config.CHROMA_PATH,
         embedding_model=test_config.EMBEDDING_MODEL,
-        max_results=test_config.MAX_RESULTS
+        max_results=test_config.MAX_RESULTS,
     )
 
     # Add course metadata and content
@@ -121,5 +121,5 @@ def empty_vector_store(test_config):
     return VectorStore(
         chroma_path=test_config.CHROMA_PATH,
         embedding_model=test_config.EMBEDDING_MODEL,
-        max_results=test_config.MAX_RESULTS
+        max_results=test_config.MAX_RESULTS,
     )

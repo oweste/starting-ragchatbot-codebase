@@ -3,14 +3,15 @@ Simple verification script to confirm the fix works end-to-end
 Tests the actual search tool with the real database
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import config
-from vector_store import VectorStore
 from search_tools import CourseSearchTool
+from vector_store import VectorStore
+
 
 def main():
     print("=" * 70)
@@ -33,7 +34,7 @@ def main():
     vector_store = VectorStore(
         chroma_path=config.CHROMA_PATH,
         embedding_model=config.EMBEDDING_MODEL,
-        max_results=config.MAX_RESULTS
+        max_results=config.MAX_RESULTS,
     )
 
     course_count = vector_store.get_course_count()
@@ -63,7 +64,9 @@ def main():
         print(f"  Error: {result1}")
         return False
     elif "No relevant content found" in result1:
-        print(f"\n  WARNING: No content found (may be due to content not matching query)")
+        print(
+            f"\n  WARNING: No content found (may be due to content not matching query)"
+        )
         print(f"  This is acceptable if the query doesn't match any content.")
     else:
         print(f"\n  SUCCESS: Got search results!")
@@ -71,7 +74,7 @@ def main():
         print(f"  Sources tracked: {len(search_tool.last_sources)}")
 
         # Show a snippet
-        lines = result1.split('\n')
+        lines = result1.split("\n")
         print(f"\n  Result preview:")
         for line in lines[:5]:
             print(f"    {line[:70]}...")
@@ -87,10 +90,7 @@ def main():
         first_course = course_titles[0]
         print(f"\nSearching in course: '{first_course}'")
 
-        result2 = search_tool.execute(
-            query="introduction",
-            course_name=first_course
-        )
+        result2 = search_tool.execute(query="introduction", course_name=first_course)
 
         if "Search error" in result2:
             print(f"\n  FAILED: Got ChromaDB error")
@@ -112,7 +112,7 @@ def main():
     print(f"Has input_schema: {'input_schema' in tool_def}")
     print(f"Required params: {tool_def['input_schema'].get('required', [])}")
 
-    if tool_def['name'] != 'search_course_content':
+    if tool_def["name"] != "search_course_content":
         print(f"\n  FAILED: Unexpected tool name")
         return False
 
@@ -135,6 +135,7 @@ def main():
     print(f"    3. Asking: 'What is prompt caching?'")
 
     return True
+
 
 if __name__ == "__main__":
     success = main()

@@ -20,7 +20,9 @@ class TestCourseSearchToolExecute:
         assert "No relevant content found" not in result
         assert "[Test Course on AI" in result  # Should have course context
 
-    def test_execute_returns_no_results_for_irrelevant_query(self, populated_vector_store):
+    def test_execute_returns_no_results_for_irrelevant_query(
+        self, populated_vector_store
+    ):
         """Test that execute returns appropriate message for irrelevant query"""
         tool = CourseSearchTool(populated_vector_store)
 
@@ -34,10 +36,7 @@ class TestCourseSearchToolExecute:
         """Test that execute respects course_name filter"""
         tool = CourseSearchTool(populated_vector_store)
 
-        result = tool.execute(
-            query="machine learning",
-            course_name="Test Course on AI"
-        )
+        result = tool.execute(query="machine learning", course_name="Test Course on AI")
 
         assert isinstance(result, str)
         assert "No relevant content found" not in result
@@ -47,10 +46,7 @@ class TestCourseSearchToolExecute:
         """Test that execute respects lesson_number filter"""
         tool = CourseSearchTool(populated_vector_store)
 
-        result = tool.execute(
-            query="neural networks",
-            lesson_number=2
-        )
+        result = tool.execute(query="neural networks", lesson_number=2)
 
         assert isinstance(result, str)
         # Should find content from lesson 2
@@ -62,9 +58,7 @@ class TestCourseSearchToolExecute:
         tool = CourseSearchTool(populated_vector_store)
 
         result = tool.execute(
-            query="deep learning",
-            course_name="Test Course",
-            lesson_number=2
+            query="deep learning", course_name="Test Course", lesson_number=2
         )
 
         assert isinstance(result, str)
@@ -74,8 +68,7 @@ class TestCourseSearchToolExecute:
         tool = CourseSearchTool(populated_vector_store)
 
         result = tool.execute(
-            query="anything",
-            course_name="Nonexistent Course That Does Not Exist"
+            query="anything", course_name="Nonexistent Course That Does Not Exist"
         )
 
         assert isinstance(result, str)
@@ -89,14 +82,14 @@ class TestCourseSearchToolExecute:
 
         # If results found, sources should be populated
         if "No relevant content found" not in result:
-            assert hasattr(tool, 'last_sources')
+            assert hasattr(tool, "last_sources")
             assert isinstance(tool.last_sources, list)
             assert len(tool.last_sources) > 0
 
             # Check source structure
             first_source = tool.last_sources[0]
-            assert 'text' in first_source
-            assert 'link' in first_source
+            assert "text" in first_source
+            assert "link" in first_source
 
     def test_execute_with_empty_store(self, empty_vector_store):
         """Test that execute handles empty vector store gracefully"""
@@ -117,7 +110,7 @@ class TestCourseSearchToolExecute:
             # Should have header with course and lesson info
             assert "[Test Course on AI" in result
             # Should have actual content
-            lines = result.split('\n')
+            lines = result.split("\n")
             assert len(lines) > 1  # At least header and content
 
     def test_tool_definition_structure(self, empty_vector_store):
@@ -127,16 +120,16 @@ class TestCourseSearchToolExecute:
         definition = tool.get_tool_definition()
 
         assert isinstance(definition, dict)
-        assert definition['name'] == 'search_course_content'
-        assert 'description' in definition
-        assert 'input_schema' in definition
+        assert definition["name"] == "search_course_content"
+        assert "description" in definition
+        assert "input_schema" in definition
 
-        schema = definition['input_schema']
-        assert schema['type'] == 'object'
-        assert 'properties' in schema
-        assert 'query' in schema['properties']
-        assert 'required' in schema
-        assert 'query' in schema['required']
+        schema = definition["input_schema"]
+        assert schema["type"] == "object"
+        assert "properties" in schema
+        assert "query" in schema["properties"]
+        assert "required" in schema
+        assert "query" in schema["required"]
 
 
 class TestToolManager:
@@ -149,7 +142,7 @@ class TestToolManager:
 
         manager.register_tool(tool)
 
-        assert 'search_course_content' in manager.tools
+        assert "search_course_content" in manager.tools
 
     def test_tool_manager_executes_tool(self, populated_vector_store):
         """Test that ToolManager can execute a registered tool"""
@@ -158,8 +151,7 @@ class TestToolManager:
         manager.register_tool(tool)
 
         result = manager.execute_tool(
-            'search_course_content',
-            query="artificial intelligence"
+            "search_course_content", query="artificial intelligence"
         )
 
         assert isinstance(result, str)
@@ -172,7 +164,7 @@ class TestToolManager:
         manager.register_tool(tool)
 
         # Execute search to populate sources
-        manager.execute_tool('search_course_content', query="AI")
+        manager.execute_tool("search_course_content", query="AI")
 
         sources = manager.get_last_sources()
         assert isinstance(sources, list)
@@ -184,7 +176,7 @@ class TestToolManager:
         manager.register_tool(tool)
 
         # Execute and verify sources exist
-        manager.execute_tool('search_course_content', query="AI")
+        manager.execute_tool("search_course_content", query="AI")
         sources_before = manager.get_last_sources()
 
         # Reset

@@ -1,11 +1,12 @@
 """Integration tests for the RAG system"""
 
-import pytest
-from unittest.mock import Mock, MagicMock, patch
-from rag_system import RAGSystem
-from config import Config
-import tempfile
 import shutil
+import tempfile
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
+from config import Config
+from rag_system import RAGSystem
 
 
 class TestRAGSystemIntegration:
@@ -34,7 +35,7 @@ class TestRAGSystemIntegration:
     @pytest.fixture
     def mock_anthropic_response(self):
         """Create a mock for successful Anthropic API response"""
-        with patch('ai_generator.anthropic.Anthropic') as mock_client_class:
+        with patch("ai_generator.anthropic.Anthropic") as mock_client_class:
             mock_client = MagicMock()
 
             # Mock tool use response
@@ -54,7 +55,7 @@ class TestRAGSystemIntegration:
 
             mock_client.messages.create.side_effect = [
                 mock_initial_response,
-                mock_final_response
+                mock_final_response,
             ]
 
             mock_client_class.return_value = mock_client
@@ -77,7 +78,7 @@ class TestRAGSystemIntegration:
         temp_dir = tempfile.mkdtemp()
         course_file = f"{temp_dir}/test_course.txt"
 
-        with open(course_file, 'w', encoding='utf-8') as f:
+        with open(course_file, "w", encoding="utf-8") as f:
             f.write("Course Title: Test Course\n")
             f.write("Course Link: https://example.com/test\n")
             f.write("Course Instructor: Test Instructor\n")
@@ -96,7 +97,9 @@ class TestRAGSystemIntegration:
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
 
-    def test_query_with_content_found(self, temp_config, sample_course, sample_course_chunks, mock_anthropic_response):
+    def test_query_with_content_found(
+        self, temp_config, sample_course, sample_course_chunks, mock_anthropic_response
+    ):
         """Test querying when relevant content exists"""
         rag = RAGSystem(temp_config)
 
@@ -112,7 +115,13 @@ class TestRAGSystemIntegration:
         assert isinstance(response, str)
         assert len(response) > 0
 
-    def test_query_with_zero_max_results_bug(self, temp_config_zero_results, sample_course, sample_course_chunks, mock_anthropic_response):
+    def test_query_with_zero_max_results_bug(
+        self,
+        temp_config_zero_results,
+        sample_course,
+        sample_course_chunks,
+        mock_anthropic_response,
+    ):
         """Test that MAX_RESULTS=0 causes the 'query failed' bug"""
         rag = RAGSystem(temp_config_zero_results)
 
@@ -126,12 +135,16 @@ class TestRAGSystemIntegration:
         # With MAX_RESULTS=0, should get no results
         assert "No relevant content found" in search_result
 
-    def test_query_creates_session_if_none_provided(self, temp_config, mock_anthropic_response):
+    def test_query_creates_session_if_none_provided(
+        self, temp_config, mock_anthropic_response
+    ):
         """Test that query works without session_id"""
         rag = RAGSystem(temp_config)
 
         # Query without session_id - should not error
-        with patch.object(rag.ai_generator, 'generate_response', return_value="Test response"):
+        with patch.object(
+            rag.ai_generator, "generate_response", return_value="Test response"
+        ):
             response, sources = rag.query("Test query")
 
             assert response == "Test response"
@@ -146,18 +159,18 @@ class TestRAGSystemIntegration:
 
         # Add some history
         rag.session_manager.add_exchange(
-            session_id,
-            "What is AI?",
-            "AI is artificial intelligence"
+            session_id, "What is AI?", "AI is artificial intelligence"
         )
 
         # Query with session
-        with patch.object(rag.ai_generator, 'generate_response', return_value="Follow-up response") as mock_gen:
+        with patch.object(
+            rag.ai_generator, "generate_response", return_value="Follow-up response"
+        ) as mock_gen:
             response, sources = rag.query("Tell me more", session_id=session_id)
 
             # Verify history was passed
             call_args = mock_gen.call_args
-            history = call_args[1]['conversation_history']
+            history = call_args[1]["conversation_history"]
             assert history is not None
             assert "What is AI?" in history
 
@@ -167,7 +180,7 @@ class TestRAGSystemIntegration:
 
         session_id = rag.session_manager.create_session()
 
-        with patch.object(rag.ai_generator, 'generate_response', return_value="Answer"):
+        with patch.object(rag.ai_generator, "generate_response", return_value="Answer"):
             rag.query("Question", session_id=session_id)
 
             # Check history was updated
@@ -176,7 +189,9 @@ class TestRAGSystemIntegration:
             assert "Question" in history
             assert "Answer" in history
 
-    def test_get_course_analytics(self, temp_config, sample_course, sample_course_chunks):
+    def test_get_course_analytics(
+        self, temp_config, sample_course, sample_course_chunks
+    ):
         """Test getting course analytics"""
         rag = RAGSystem(temp_config)
 
@@ -186,10 +201,10 @@ class TestRAGSystemIntegration:
 
         analytics = rag.get_course_analytics()
 
-        assert 'total_courses' in analytics
-        assert 'course_titles' in analytics
-        assert analytics['total_courses'] == 1
-        assert sample_course.title in analytics['course_titles']
+        assert "total_courses" in analytics
+        assert "course_titles" in analytics
+        assert analytics["total_courses"] == 1
+        assert sample_course.title in analytics["course_titles"]
 
     def test_vector_store_max_results_configuration(self, temp_config):
         """Test that vector store respects MAX_RESULTS configuration"""
@@ -230,7 +245,7 @@ class TestRAGSystemDocumentProcessing:
         temp_docs = tempfile.mkdtemp()
         course_file = f"{temp_docs}/course.txt"
 
-        with open(course_file, 'w', encoding='utf-8') as f:
+        with open(course_file, "w", encoding="utf-8") as f:
             f.write("Course Title: Unique Test Course\n")
             f.write("Course Link: https://example.com\n")
             f.write("Course Instructor: Instructor\n")
@@ -250,7 +265,9 @@ class TestRAGSystemDocumentProcessing:
         finally:
             shutil.rmtree(temp_docs, ignore_errors=True)
 
-    def test_add_course_folder_with_clear(self, temp_config, sample_course, sample_course_chunks):
+    def test_add_course_folder_with_clear(
+        self, temp_config, sample_course, sample_course_chunks
+    ):
         """Test that add_course_folder clears existing data when requested"""
         rag = RAGSystem(temp_config)
 
@@ -286,7 +303,9 @@ class TestRAGSystemSourceTracking:
         yield config
         shutil.rmtree(temp_dir, ignore_errors=True)
 
-    def test_sources_returned_from_query(self, temp_config, sample_course, sample_course_chunks):
+    def test_sources_returned_from_query(
+        self, temp_config, sample_course, sample_course_chunks
+    ):
         """Test that sources are returned from query"""
         rag = RAGSystem(temp_config)
 
@@ -295,13 +314,12 @@ class TestRAGSystemSourceTracking:
         rag.vector_store.add_course_content(sample_course_chunks)
 
         # Mock AI response to use tool
-        with patch.object(rag.ai_generator, 'generate_response') as mock_gen:
+        with patch.object(rag.ai_generator, "generate_response") as mock_gen:
             # Simulate AI calling the search tool
             def side_effect(*args, **kwargs):
                 # Execute the tool
                 rag.tool_manager.execute_tool(
-                    'search_course_content',
-                    query="artificial intelligence"
+                    "search_course_content", query="artificial intelligence"
                 )
                 return "AI response"
 
@@ -312,16 +330,19 @@ class TestRAGSystemSourceTracking:
             # Sources should be populated
             assert isinstance(sources, list)
 
-    def test_sources_reset_after_query(self, temp_config, sample_course, sample_course_chunks):
+    def test_sources_reset_after_query(
+        self, temp_config, sample_course, sample_course_chunks
+    ):
         """Test that sources are reset between queries"""
         rag = RAGSystem(temp_config)
 
         rag.vector_store.add_course_metadata(sample_course)
         rag.vector_store.add_course_content(sample_course_chunks)
 
-        with patch.object(rag.ai_generator, 'generate_response') as mock_gen:
+        with patch.object(rag.ai_generator, "generate_response") as mock_gen:
+
             def side_effect(*args, **kwargs):
-                rag.tool_manager.execute_tool('search_course_content', query="AI")
+                rag.tool_manager.execute_tool("search_course_content", query="AI")
                 return "Response"
 
             mock_gen.side_effect = side_effect

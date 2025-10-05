@@ -39,6 +39,52 @@ uv add <package-name>
 uv sync
 ```
 
+### Code Quality Tools
+
+This project uses industry-standard code quality tools:
+
+**Tools**:
+- **black**: Automatic code formatting (line length: 88)
+- **isort**: Import statement sorting (black-compatible profile)
+- **flake8**: Linting and style checking
+
+**Development Scripts** (in `scripts/` directory):
+
+```bash
+# Format code (auto-fixes issues)
+./scripts/format.sh      # Linux/Mac
+scripts\format.bat       # Windows
+
+# Run linting only
+./scripts/lint.sh        # Linux/Mac
+scripts\lint.bat         # Windows
+
+# Run all quality checks (check-only mode)
+./scripts/quality-check.sh      # Linux/Mac
+scripts\quality-check.bat       # Windows
+```
+
+**Manual Commands**:
+```bash
+# Format with black
+uv run black backend/
+
+# Sort imports
+uv run isort backend/
+
+# Lint with flake8
+uv run flake8 backend/
+
+# Check without modifying
+uv run black --check backend/
+uv run isort --check-only backend/
+```
+
+**Configuration**:
+- Black & isort settings in `pyproject.toml`
+- Flake8 settings in `.flake8`
+- All tools configured to work together (88-char line length, compatible ignore rules)
+
 ## Architecture
 
 ### Core Pipeline Flow
