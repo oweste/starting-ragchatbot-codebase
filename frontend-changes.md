@@ -69,6 +69,13 @@ Updated `CLAUDE.md` with a new "Code Quality Tools" section including:
 - Manual command examples
 - Configuration file locations
 
+### 7. Testing Framework Enhancements
+
+Added comprehensive testing infrastructure:
+- **pytest configuration** - Added to `pyproject.toml`
+- **Test fixtures** - Enhanced `backend/tests/conftest.py`
+- **API endpoint tests** - Created `backend/tests/test_api.py`
+
 ## Usage
 
 ### Quick Start
@@ -109,6 +116,7 @@ uv run flake8 backend/          # Run linting
 - `scripts/quality-check.sh`
 - `scripts/quality-check.bat`
 - `CLAUDE.md` (updated with quality tools section)
+- `backend/tests/test_api.py` (API endpoint tests)
 
 ### Formatted
 - `backend/app.py`
