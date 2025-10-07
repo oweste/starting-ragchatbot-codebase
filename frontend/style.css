@@ -792,6 +792,40 @@ details[open] .suggested-header::before {
     transform: translateX(2px);
 }
 
+/* App Logo in Lower Left Corner */
+.app-logo {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 900;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    cursor: default;
+}
+
+.app-logo:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+}
+
+.app-logo svg {
+    transition: all 0.3s ease;
+}
+
+.app-logo:hover svg {
+    transform: rotate(5deg);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content {
@@ -866,6 +900,18 @@ details[open] .suggested-header::before {
     .suggested-item {
         padding: 0.5rem 0.75rem;
         font-size: 0.8rem;
+    }
+
+    .app-logo {
+        width: 48px;
+        height: 48px;
+        bottom: 1rem;
+        left: 1rem;
+    }
+
+    .app-logo svg {
+        width: 28px;
+        height: 28px;
     }
 }
 
